@@ -70,13 +70,17 @@ jobs:
           "$GODOT_BIN" --headless --path . --editor --quit 2>&1 | tail -20 || true
 
       - name: Configure preset for CI export
+        env:
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
+          import os
           import pathlib
           import re
 
           path = pathlib.Path("export_presets.cfg")
+          team_id = os.getenv("IOS_TEAM_ID") or "AAAAAAAAAA"
           text = path.read_text(encoding="utf-8")
           text = re.sub(
               r'application/export_project_only=false',
@@ -85,7 +89,7 @@ jobs:
           )
           text = re.sub(
               r'application/app_store_team_id="[^"]*"',
-              'application/app_store_team_id=""',
+              f'application/app_store_team_id="{team_id}"',
               text,
           )
           path.write_text(text, encoding="utf-8")
@@ -252,10 +256,44 @@ jobs:
           New-Item -ItemType Directory -Force -Path "$HOME\godot-ci" | Out-Null
           Set-Location "$HOME\godot-ci"
 
-          Invoke-WebRequest -Uri "$base/Godot_v$env:GODOT_VERSION_win64.exe.zip" -OutFile "godot.zip"
+          $godotCandidates = @(
+            "Godot_v${env:GODOT_VERSION}_win64.exe.zip",
+            "Godot_v${env:GODOT_VERSION}_windows.x86_64.exe.zip"
+          )
+          $downloadedGodot = $false
+          foreach ($asset in $godotCandidates) {
+            $url = "$base/$asset"
+            try {
+              Invoke-WebRequest -Uri $url -OutFile "godot.zip"
+              $downloadedGodot = $true
+              break
+            } catch {
+              Write-Host "Asset not found at $url"
+            }
+          }
+          if (-not $downloadedGodot) {
+            throw "Failed to download Windows Godot binary from known asset names"
+          }
           Expand-Archive -Path "godot.zip" -DestinationPath "." -Force
 
-          Invoke-WebRequest -Uri "$base/Godot_v$env:GODOT_VERSION_export_templates.tpz" -OutFile "templates.tpz"
+          $templatesCandidates = @(
+            "Godot_v${env:GODOT_VERSION}_export_templates.tpz",
+            "Godot_v${env:GODOT_VERSION}_export_templates.zip"
+          )
+          $downloadedTemplates = $false
+          foreach ($asset in $templatesCandidates) {
+            $url = "$base/$asset"
+            try {
+              Invoke-WebRequest -Uri $url -OutFile "templates.tpz"
+              $downloadedTemplates = $true
+              break
+            } catch {
+              Write-Host "Asset not found at $url"
+            }
+          }
+          if (-not $downloadedTemplates) {
+            throw "Failed to download export templates from known asset names"
+          }
           Expand-Archive -Path "templates.tpz" -DestinationPath "." -Force
 
           $templateDest = "$HOME\AppData\Roaming\Godot\export_templates\$env:GODOT_TEMPLATE_DIR"
