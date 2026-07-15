@@ -1,0 +1,14 @@
+[configuration]
+
+entry_symbol = "pixel_painter_bluetooth_init"
+compatibility_minimum = "4.7"
+
+[libraries]
+
+; Only Windows is listed on purpose. On every other platform the library is
+; simply absent, Engine.has_singleton("PixelPainterBluetooth") stays false, and
+; PPBluetoothTransport reports Bluetooth as unavailable with a reason -- which is
+; exactly the intended behaviour, not a failure.
+
+windows.debug.x86_64 = "res://bin/libpixel_painter_bluetooth.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://bin/libpixel_painter_bluetooth.windows.template_release.x86_64.dll"

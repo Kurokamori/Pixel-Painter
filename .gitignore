@@ -1,0 +1,23 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Raw export output. The shipped release artifact lives in dist/ instead: a
+# 109 MB .exe exceeds GitHub's 100 MB file limit, so it is committed zipped.
+/build/
+
+# Native plugin build products
+native/windows/godot-cpp/
+native/windows/bin/
+native/ios/build/
+*.obj
+*.lib
+*.exp
+*.pdb
+
+# The Windows GDExtension config is kept as *.gdextension.template on purpose.
+# With the plain extension Godot tries to load it, cannot find the (unbuilt) DLL,
+# and errors on every run -- including during export. Rename it back to
+# .gdextension only once the DLL actually exists.
+native/windows/*.gdextension
+!native/windows/*.gdextension.template

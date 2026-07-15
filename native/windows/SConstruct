@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+#
+# Builds the Windows Bluetooth GDExtension.
+#
+#   git clone -b 4.7 https://github.com/godotengine/godot-cpp
+#   scons platform=windows target=template_release
+#
+# Requires MSVC: C++/WinRT ships with the Windows SDK and is not available under
+# MinGW, so this will not build with gcc.
+
+import os
+
+env = SConscript("godot-cpp/SConstruct")
+
+env.Append(CPPPATH=["src/", "../shared/"])
+
+# C++/WinRT needs C++17 and coroutine support, and pulls in the Windows runtime
+# libraries for BLE.
+if env["platform"] == "windows":
+    env.Append(CPPDEFINES=["WIN32_LEAN_AND_MEAN", "NOMINMAX"])
+    if env.get("is_msvc", False):
+        env.Append(CXXFLAGS=["/std:c++17", "/await", "/EHsc"])
+    env.Append(
+        LIBS=[
+            "windowsapp",  # WinRT
+            "runtimeobject",
+        ]
+    )
+else:
+    print("This extension is Windows-only: it is a thin wrapper over WinRT Bluetooth.")
+    Exit(1)
+
+sources = Glob("src/*.cpp")
+
+library = env.SharedLibrary(
+    "bin/libpixel_painter_bluetooth{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+    source=sources,
+)
+
+Default(library)

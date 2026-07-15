@@ -1,0 +1,20 @@
+[config]
+name="PixelPainterBluetooth"
+binary="libpixel_painter_bluetooth.a"
+
+initialization="pixel_painter_bluetooth_init"
+deinitialization="pixel_painter_bluetooth_deinit"
+
+[dependencies]
+linked=[]
+embedded=[]
+system=["CoreBluetooth.framework", "Foundation.framework"]
+
+capabilities=[]
+
+files=[]
+
+[plist]
+NSBluetoothAlwaysUsageDescription="string:Pixel Painter uses Bluetooth to send your artwork to your other devices."
+NSBluetoothPeripheralUsageDescription="string:Pixel Painter uses Bluetooth to send your artwork to your other devices."
+UIBackgroundModes="array:[\"bluetooth-central\", \"bluetooth-peripheral\"]"

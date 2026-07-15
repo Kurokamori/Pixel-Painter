@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/dialogs/pp_new_sprite_dialog.gd" id="1_script"]
+
+[node name="NewSpriteDialog" type="ConfirmationDialog"]
+title = "New Sprite"
+initial_position = 2
+size = Vector2i(420, 300)
+ok_button_text = "Create"
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 408.0
+offset_bottom = 244.0
+theme_override_constants/separation = 10
+
+[node name="PresetRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/PresetRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+text = "Preset"
+vertical_alignment = 1
+
+[node name="PresetOption" type="OptionButton" parent="Layout/PresetRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SizeRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/SizeRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+text = "Size"
+vertical_alignment = 1
+
+[node name="WidthSpin" type="SpinBox" parent="Layout/SizeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 4096.0
+value = 64.0
+suffix = "px"
+
+[node name="Times" type="Label" parent="Layout/SizeRow"]
+layout_mode = 2
+text = "×"
+vertical_alignment = 1
+
+[node name="HeightSpin" type="SpinBox" parent="Layout/SizeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 4096.0
+value = 64.0
+suffix = "px"
+
+[node name="PaletteRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/PaletteRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+text = "Palette"
+vertical_alignment = 1
+
+[node name="PaletteOption" type="OptionButton" parent="Layout/PaletteRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Hint" type="Label" parent="Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.604, 0.675, 1)
+theme_override_font_sizes/font_size = 12
+text = "Pixel art reads best small. 32–64px is a good place to start."
+autowrap_mode = 3

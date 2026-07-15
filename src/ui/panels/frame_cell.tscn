@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/pp_frame_cell.gd" id="1_script"]
+
+[node name="FrameCell" type="Button"]
+custom_minimum_size = Vector2(58, 62)
+offset_right = 58.0
+offset_bottom = 62.0
+toggle_mode = true
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="IndexLabel" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+text = "1"
+horizontal_alignment = 1
+
+[node name="Thumbnail" type="TextureRect" parent="Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DurationLabel" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+text = "100"
+horizontal_alignment = 1
+
+[node name="LinkBadge" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+mouse_filter = 2
+tooltip_text = "This cel is linked — editing it changes every frame that shares it."
+theme_override_font_sizes/font_size = 11
+text = "⛓"

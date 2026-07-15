@@ -1,0 +1,80 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/dialogs/pp_sync_dialog.gd" id="1_script"]
+
+[node name="SyncDialog" type="AcceptDialog"]
+title = "Sync"
+initial_position = 2
+size = Vector2i(520, 460)
+ok_button_text = "Close"
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 508.0
+offset_bottom = 404.0
+theme_override_constants/separation = 10
+
+[node name="DeviceRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/DeviceRow"]
+layout_mode = 2
+text = "This device"
+vertical_alignment = 1
+
+[node name="DeviceNameEdit" type="LineEdit" parent="Layout/DeviceRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The name other devices will see."
+
+[node name="TransportStatus" type="VBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PeersLabel" type="Label" parent="Layout"]
+layout_mode = 2
+text = "Devices on your network"
+
+[node name="Scroll" type="ScrollContainer" parent="Layout"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Peers" type="VBoxContainer" parent="Layout/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="EmptyLabel" type="Label" parent="Layout/Scroll/Peers"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.604, 0.675, 1)
+text = "Looking for devices… Make sure the other device is on the same Wi-Fi network with Pixel Painter open."
+autowrap_mode = 3
+
+[node name="Progress" type="VBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ProgressLabel" type="Label" parent="Layout/Progress"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sending…"
+
+[node name="ProgressBar" type="ProgressBar" parent="Layout/Progress"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+show_percentage = false

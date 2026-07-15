@@ -1,0 +1,139 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/pp_timeline_panel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/frame_cell.tscn" id="2_cell"]
+
+[node name="TimelinePanel" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 148)
+offset_right = 1200.0
+offset_bottom = 148.0
+script = ExtResource("1_script")
+cell_scene = ExtResource("2_cell")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Controls" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="FirstButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "First frame (Home)"
+text = "⏮"
+
+[node name="PrevButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Previous frame (,)"
+text = "◀"
+
+[node name="PlayButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+tooltip_text = "Play / pause (Enter)"
+toggle_mode = true
+text = "▶"
+
+[node name="NextButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Next frame (.)"
+text = "▶|"
+
+[node name="LastButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Last frame (End)"
+text = "⏭"
+
+[node name="LoopButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Loop playback"
+toggle_mode = true
+button_pressed = true
+text = "↻"
+
+[node name="Sep1" type="VSeparator" parent="Layout/Controls"]
+layout_mode = 2
+
+[node name="OnionButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Onion skin — ghost the neighbouring frames"
+toggle_mode = true
+text = "Onion"
+
+[node name="DurationLabel" type="Label" parent="Layout/Controls"]
+layout_mode = 2
+text = "Duration"
+vertical_alignment = 1
+
+[node name="DurationSpin" type="SpinBox" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 40)
+layout_mode = 2
+tooltip_text = "This frame's duration, in milliseconds"
+min_value = 1.0
+max_value = 10000.0
+value = 100.0
+suffix = "ms"
+
+[node name="Spacer" type="Control" parent="Layout/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddFrameButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "New empty frame"
+text = "+ Frame"
+
+[node name="DuplicateFrameButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Duplicate this frame"
+text = "Duplicate"
+
+[node name="LinkFrameButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Add a frame whose cel is linked to this one — edit either, both change"
+text = "Link"
+
+[node name="UnlinkFrameButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Give this frame its own private copy of the cel"
+text = "Unlink"
+
+[node name="DeleteFrameButton" type="Button" parent="Layout/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Delete this frame"
+text = "🗑"
+
+[node name="Scroll" type="ScrollContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 0
+
+[node name="Frames" type="HBoxContainer" parent="Layout/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4

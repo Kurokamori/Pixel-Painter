@@ -1,0 +1,185 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/pp_tools_panel.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/pencil.svg" id="2_pencil"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/eraser.svg" id="3_eraser"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/bucket.svg" id="4_bucket"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/eyedropper.svg" id="5_eyedropper"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/line.svg" id="6_line"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/rectangle.svg" id="7_rectangle"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/ellipse.svg" id="8_ellipse"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/gradient.svg" id="9_gradient"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/select_rect.svg" id="10_select_rect"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/select_ellipse.svg" id="11_select_ellipse"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/lasso.svg" id="12_lasso"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/magic_wand.svg" id="13_magic_wand"]
+[ext_resource type="Texture2D" path="res://src/ui/icons/move.svg" id="14_move"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_tools"]
+allow_unpress = false
+
+[node name="ToolsPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(64, 0)
+offset_right = 64.0
+offset_bottom = 600.0
+script = ExtResource("1_script")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Tools" type="VBoxContainer" parent="Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="PencilButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Pencil (B)"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("2_pencil")
+expand_icon = true
+metadata/tool_id = "pencil"
+
+[node name="EraserButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Eraser (E)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("3_eraser")
+expand_icon = true
+metadata/tool_id = "eraser"
+
+[node name="BucketButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Fill (G)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("4_bucket")
+expand_icon = true
+metadata/tool_id = "bucket"
+
+[node name="EyedropperButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Eyedropper (I)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("5_eyedropper")
+expand_icon = true
+metadata/tool_id = "eyedropper"
+
+[node name="Separator1" type="HSeparator" parent="Scroll/Tools"]
+layout_mode = 2
+
+[node name="LineButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Line (L)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("6_line")
+expand_icon = true
+metadata/tool_id = "line"
+
+[node name="RectangleButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Rectangle (R)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("7_rectangle")
+expand_icon = true
+metadata/tool_id = "rectangle"
+
+[node name="EllipseButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Ellipse (O)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("8_ellipse")
+expand_icon = true
+metadata/tool_id = "ellipse"
+
+[node name="GradientButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Gradient (D)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("9_gradient")
+expand_icon = true
+metadata/tool_id = "gradient"
+
+[node name="Separator2" type="HSeparator" parent="Scroll/Tools"]
+layout_mode = 2
+
+[node name="SelectRectButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Rectangle Select (M)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("10_select_rect")
+expand_icon = true
+metadata/tool_id = "select_rect"
+
+[node name="SelectEllipseButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Ellipse Select"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("11_select_ellipse")
+expand_icon = true
+metadata/tool_id = "select_ellipse"
+
+[node name="LassoButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Lasso Select (Q)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("12_lasso")
+expand_icon = true
+metadata/tool_id = "lasso"
+
+[node name="MagicWandButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Magic Wand (W)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("13_magic_wand")
+expand_icon = true
+metadata/tool_id = "magic_wand"
+
+[node name="MoveButton" type="Button" parent="Scroll/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Move (V)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tools")
+icon = ExtResource("14_move")
+expand_icon = true
+metadata/tool_id = "move"

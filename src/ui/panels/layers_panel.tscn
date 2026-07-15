@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/pp_layers_panel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/layer_row.tscn" id="2_row"]
+
+[node name="LayersPanel" type="PanelContainer"]
+offset_right = 280.0
+offset_bottom = 320.0
+script = ExtResource("1_script")
+row_scene = ExtResource("2_row")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TitleRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Layout/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Layers"
+
+[node name="Scroll" type="ScrollContainer" parent="Layout"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="VBoxContainer" parent="Layout/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="Properties" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BlendOption" type="OptionButton" parent="Layout/Properties"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Layer blend mode"
+
+[node name="OpacitySlider" type="HSlider" parent="Layout/Properties"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 40)
+layout_mode = 2
+size_flags_vertical = 1
+tooltip_text = "Layer opacity"
+max_value = 100.0
+value = 100.0
+
+[node name="Buttons" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="AddButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Add layer"
+text = "+"
+
+[node name="DuplicateButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Duplicate layer"
+text = "⧉"
+
+[node name="MergeButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Merge down"
+text = "⤓"
+
+[node name="UpButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Move layer up"
+text = "▲"
+
+[node name="DownButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Move layer down"
+text = "▼"
+
+[node name="DeleteButton" type="Button" parent="Layout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Delete layer"
+text = "🗑"

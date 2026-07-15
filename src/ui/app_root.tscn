@@ -1,0 +1,331 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://src/ui/pp_app_root.gd" id="1_root"]
+[ext_resource type="Script" path="res://src/app/pp_app_state.gd" id="2_state"]
+[ext_resource type="Script" path="res://src/sync/pp_sync_service.gd" id="3_sync"]
+[ext_resource type="Script" path="res://src/ui/canvas/pp_canvas_view.gd" id="4_canvas"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/tools_panel.tscn" id="5_tools"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/tool_options_bar.tscn" id="6_options"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/color_panel.tscn" id="7_color"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/palette_panel.tscn" id="8_palette"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/layers_panel.tscn" id="9_layers"]
+[ext_resource type="PackedScene" path="res://src/ui/panels/timeline_panel.tscn" id="10_timeline"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogs/new_sprite_dialog.tscn" id="11_new"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogs/export_dialog.tscn" id="12_export"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogs/resize_dialog.tscn" id="13_resize"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogs/sync_dialog.tscn" id="14_sync_dialog"]
+
+[node name="AppRoot" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_root")
+
+[node name="AppState" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_state")
+
+[node name="SyncService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_sync")
+
+[node name="Main" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 2
+
+[node name="TopBar" type="PanelContainer" parent="Main"]
+layout_mode = 2
+
+[node name="Row" type="HBoxContainer" parent="Main/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="FileButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "File"
+
+[node name="EditButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Edit"
+
+[node name="SpriteButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Sprite"
+
+[node name="ViewButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "View"
+
+[node name="Sep1" type="VSeparator" parent="Main/TopBar/Row"]
+layout_mode = 2
+
+[node name="UndoButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
+layout_mode = 2
+tooltip_text = "Undo (Ctrl+Z)"
+text = "↶"
+
+[node name="RedoButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
+layout_mode = 2
+tooltip_text = "Redo (Ctrl+Shift+Z)"
+text = "↷"
+
+[node name="TitleLabel" type="Label" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Untitled"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+text = ""
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SyncButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Send this sprite to another device"
+text = "Sync"
+
+[node name="PanelsButton" type="Button" parent="Main/TopBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
+layout_mode = 2
+tooltip_text = "Show / hide the side panels"
+toggle_mode = true
+button_pressed = true
+text = "▤"
+
+[node name="ToolOptionsBar" parent="Main" instance=ExtResource("6_options")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Middle" type="HBoxContainer" parent="Main"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="ToolsPanel" parent="Main/Middle" instance=ExtResource("5_tools")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CanvasView" type="Control" parent="Main/Middle"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("4_canvas")
+
+[node name="RightDock" type="ScrollContainer" parent="Main/Middle"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(292, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DockColumn" type="VBoxContainer" parent="Main/Middle/RightDock"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ColorPanel" parent="Main/Middle/RightDock/DockColumn" instance=ExtResource("7_color")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PalettePanel" parent="Main/Middle/RightDock/DockColumn" instance=ExtResource("8_palette")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LayersPanel" parent="Main/Middle/RightDock/DockColumn" instance=ExtResource("9_layers")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TimelinePanel" parent="Main" instance=ExtResource("10_timeline")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FileMenu" type="PopupMenu" parent="."]
+unique_name_in_owner = true
+item_count = 9
+item_0/text = "New Sprite…"
+item_0/id = 0
+item_1/text = "Open…"
+item_1/id = 1
+item_2/text = "Save"
+item_2/id = 2
+item_3/text = "Save As…"
+item_3/id = 3
+item_4/text = ""
+item_4/id = -1
+item_4/separator = true
+item_5/text = "Import Image…"
+item_5/id = 4
+item_6/text = "Export…"
+item_6/id = 5
+item_7/text = ""
+item_7/id = -1
+item_7/separator = true
+item_8/text = "Quit"
+item_8/id = 6
+
+[node name="EditMenu" type="PopupMenu" parent="."]
+unique_name_in_owner = true
+item_count = 11
+item_0/text = "Undo"
+item_0/id = 10
+item_1/text = "Redo"
+item_1/id = 11
+item_2/text = ""
+item_2/id = -1
+item_2/separator = true
+item_3/text = "Cut"
+item_3/id = 12
+item_4/text = "Copy"
+item_4/id = 13
+item_5/text = "Paste"
+item_5/id = 14
+item_6/text = "Delete"
+item_6/id = 15
+item_7/text = ""
+item_7/id = -1
+item_7/separator = true
+item_8/text = "Select All"
+item_8/id = 16
+item_9/text = "Deselect"
+item_9/id = 17
+item_10/text = "Invert Selection"
+item_10/id = 18
+
+[node name="SpriteMenu" type="PopupMenu" parent="."]
+unique_name_in_owner = true
+item_count = 9
+item_0/text = "Resize Canvas…"
+item_0/id = 20
+item_1/text = "Scale Sprite…"
+item_1/id = 21
+item_2/text = "Crop to Selection"
+item_2/id = 22
+item_3/text = ""
+item_3/id = -1
+item_3/separator = true
+item_4/text = "Flip Horizontal"
+item_4/id = 23
+item_5/text = "Flip Vertical"
+item_5/id = 24
+item_6/text = ""
+item_6/id = -1
+item_6/separator = true
+item_7/text = "Rotate 90° Clockwise"
+item_7/id = 25
+item_8/text = "Rotate 180°"
+item_8/id = 26
+
+[node name="ViewMenu" type="PopupMenu" parent="."]
+unique_name_in_owner = true
+item_count = 7
+item_0/text = "Zoom In"
+item_0/id = 30
+item_1/text = "Zoom Out"
+item_1/id = 31
+item_2/text = "Fit to Window"
+item_2/id = 32
+item_3/text = ""
+item_3/id = -1
+item_3/separator = true
+item_4/text = "Grid"
+item_4/checkable = 1
+item_4/id = 33
+item_5/text = "Pixel Grid"
+item_5/checkable = 1
+item_5/checked = true
+item_5/id = 34
+item_6/text = "Timeline"
+item_6/checkable = 1
+item_6/checked = true
+item_6/id = 35
+
+[node name="NewSpriteDialog" parent="." instance=ExtResource("11_new")]
+unique_name_in_owner = true
+visible = false
+
+[node name="ExportDialog" parent="." instance=ExtResource("12_export")]
+unique_name_in_owner = true
+visible = false
+
+[node name="ResizeDialog" parent="." instance=ExtResource("13_resize")]
+unique_name_in_owner = true
+visible = false
+
+[node name="SyncDialog" parent="." instance=ExtResource("14_sync_dialog")]
+unique_name_in_owner = true
+visible = false
+
+[node name="OpenDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Open Sprite"
+initial_position = 2
+size = Vector2i(720, 520)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Save Sprite"
+initial_position = 2
+size = Vector2i(720, 520)
+ok_button_text = "Save"
+access = 2
+
+[node name="PaletteOpenDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Load Palette"
+initial_position = 2
+size = Vector2i(720, 520)
+ok_button_text = "Load"
+file_mode = 0
+access = 2
+
+[node name="PaletteSaveDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Save Palette"
+initial_position = 2
+size = Vector2i(720, 520)
+access = 2
+
+[node name="MessageDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 2
+size = Vector2i(420, 160)
+
+[node name="IncomingDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Incoming Sprite"
+initial_position = 2
+size = Vector2i(460, 180)
+ok_button_text = "Open"

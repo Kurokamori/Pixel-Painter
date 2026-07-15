@@ -1,0 +1,202 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/pp_tool_options_bar.gd" id="1_script"]
+
+[node name="ToolOptionsBar" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 48)
+offset_right = 1200.0
+offset_bottom = 48.0
+script = ExtResource("1_script")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+vertical_scroll_mode = 0
+
+[node name="Row" type="HBoxContainer" parent="Scroll"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ToolNameLabel" type="Label" parent="Scroll/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "Pencil"
+vertical_alignment = 1
+
+[node name="BrushGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/BrushGroup"]
+layout_mode = 2
+text = "Brush"
+vertical_alignment = 1
+
+[node name="BrushShapeOption" type="OptionButton" parent="Scroll/Row/BrushGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(104, 40)
+layout_mode = 2
+
+[node name="BrushSizeSpin" type="SpinBox" parent="Scroll/Row/BrushGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 40)
+layout_mode = 2
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+
+[node name="OpacityGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/OpacityGroup"]
+layout_mode = 2
+text = "Opacity"
+vertical_alignment = 1
+
+[node name="OpacitySlider" type="HSlider" parent="Scroll/Row/OpacityGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_vertical = 1
+min_value = 1.0
+max_value = 100.0
+value = 100.0
+
+[node name="OpacityValueLabel" type="Label" parent="Scroll/Row/OpacityGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "100%"
+vertical_alignment = 1
+
+[node name="PixelPerfectGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PixelPerfectCheck" type="CheckButton" parent="Scroll/Row/PixelPerfectGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Removes redundant corner pixels from freehand strokes (1px brush only)."
+button_pressed = true
+text = "Pixel Perfect"
+
+[node name="LockAlphaGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LockAlphaCheck" type="CheckButton" parent="Scroll/Row/LockAlphaGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Only recolour pixels that are already opaque."
+text = "Lock Alpha"
+
+[node name="ToleranceGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/ToleranceGroup"]
+layout_mode = 2
+text = "Tolerance"
+vertical_alignment = 1
+
+[node name="ToleranceSpin" type="SpinBox" parent="Scroll/Row/ToleranceGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 40)
+layout_mode = 2
+max_value = 255.0
+
+[node name="ContiguousGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ContiguousCheck" type="CheckButton" parent="Scroll/Row/ContiguousGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Off: replace this colour everywhere on the layer."
+button_pressed = true
+text = "Contiguous"
+
+[node name="SampleGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SampleAllCheck" type="CheckButton" parent="Scroll/Row/SampleGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Sample the flattened frame instead of just the active layer."
+text = "Sample All Layers"
+
+[node name="FillGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FillCheck" type="CheckButton" parent="Scroll/Row/FillGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Filled"
+
+[node name="FromCenterGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FromCenterCheck" type="CheckButton" parent="Scroll/Row/FromCenterGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "From Centre"
+
+[node name="SelectionOpGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/SelectionOpGroup"]
+layout_mode = 2
+text = "Mode"
+vertical_alignment = 1
+
+[node name="SelectionOpOption" type="OptionButton" parent="Scroll/Row/SelectionOpGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+tooltip_text = "Shift adds, Alt subtracts, Shift+Alt intersects."
+
+[node name="SymmetryGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/SymmetryGroup"]
+layout_mode = 2
+text = "Symmetry"
+vertical_alignment = 1
+
+[node name="SymmetryOption" type="OptionButton" parent="Scroll/Row/SymmetryGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+
+[node name="PressureGroup" type="HBoxContainer" parent="Scroll/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/Row/PressureGroup"]
+layout_mode = 2
+text = "Pressure"
+vertical_alignment = 1
+
+[node name="PressureOption" type="OptionButton" parent="Scroll/Row/PressureGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 40)
+layout_mode = 2
+tooltip_text = "What stylus pressure controls. Wacom and Apple Pencil report pressure natively."

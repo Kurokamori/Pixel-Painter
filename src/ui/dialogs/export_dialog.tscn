@@ -1,0 +1,110 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/dialogs/pp_export_dialog.gd" id="1_script"]
+
+[node name="ExportDialog" type="ConfirmationDialog"]
+title = "Export"
+initial_position = 2
+size = Vector2i(440, 340)
+ok_button_text = "Export…"
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 428.0
+offset_bottom = 284.0
+theme_override_constants/separation = 10
+
+[node name="FormatRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/FormatRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Format"
+vertical_alignment = 1
+
+[node name="FormatOption" type="OptionButton" parent="Layout/FormatRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScaleRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/ScaleRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Scale"
+vertical_alignment = 1
+
+[node name="ScaleSpin" type="SpinBox" parent="Layout/ScaleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 32.0
+value = 1.0
+prefix = "×"
+
+[node name="LayoutRow" type="HBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/LayoutRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Layout"
+vertical_alignment = 1
+
+[node name="LayoutOption" type="OptionButton" parent="Layout/LayoutRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColumnsRow" type="HBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Layout/ColumnsRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Columns"
+vertical_alignment = 1
+
+[node name="ColumnsSpin" type="SpinBox" parent="Layout/ColumnsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 64.0
+value = 4.0
+
+[node name="MetadataRow" type="HBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MetadataCheck" type="CheckButton" parent="Layout/MetadataRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+tooltip_text = "Write a .json alongside the sheet describing each frame's rect and duration."
+button_pressed = true
+text = "Write JSON metadata"
+
+[node name="SummaryLabel" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.604, 0.675, 1)
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
