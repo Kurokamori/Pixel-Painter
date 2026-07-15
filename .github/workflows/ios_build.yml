@@ -1,0 +1,299 @@
+name: Build iOS and Windows
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+    paths-ignore:
+      - "docs/**"
+      - "dist/**"
+      - "**/*.md"
+  workflow_dispatch: {}
+
+env:
+  GODOT_VERSION: 4.7-beta5
+  GODOT_TEMPLATE_DIR: 4.7.beta5
+
+jobs:
+  build-ios:
+    name: Export and compile iOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Cache Godot editor and export templates
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-ci
+            ~/Library/Application Support/Godot/export_templates/${{ env.GODOT_TEMPLATE_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-macos
+
+      - name: Download Godot and export templates
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          BASE="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}"
+          mkdir -p ~/godot-ci
+          cd ~/godot-ci
+
+          echo "Downloading Godot ${GODOT_VERSION} macOS editor"
+          curl -fL -o godot.zip "${BASE}/Godot_v${GODOT_VERSION}_macos.universal.zip"
+          unzip -q godot.zip
+          chmod +x "Godot.app/Contents/MacOS/Godot"
+
+          echo "Downloading export templates"
+          curl -fL -o templates.tpz "${BASE}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          unzip -q templates.tpz
+          TEMPLATE_DEST="$HOME/Library/Application Support/Godot/export_templates/${GODOT_TEMPLATE_DIR}"
+          mkdir -p "$TEMPLATE_DEST"
+          cp -R templates/* "$TEMPLATE_DEST/"
+          echo "Installed templates to $TEMPLATE_DEST"
+          test -f "$TEMPLATE_DEST/ios.zip" || (echo "ios.zip missing from templates" && exit 1)
+
+      - name: Expose the Godot binary on PATH
+        run: |
+          echo "GODOT_BIN=$HOME/godot-ci/Godot.app/Contents/MacOS/Godot" >> "$GITHUB_ENV"
+
+      - name: Report versions
+        run: |
+          "$GODOT_BIN" --version
+          xcodebuild -version
+
+      - name: Import the project
+        run: |
+          "$GODOT_BIN" --headless --path . --editor --quit 2>&1 | tail -20 || true
+
+      - name: Configure preset for CI export
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          import re
+
+          path = pathlib.Path("export_presets.cfg")
+          text = path.read_text(encoding="utf-8")
+          text = re.sub(
+              r'application/export_project_only=false',
+              'application/export_project_only=true',
+              text,
+          )
+          text = re.sub(
+              r'application/app_store_team_id="[^"]*"',
+              'application/app_store_team_id=""',
+              text,
+          )
+          path.write_text(text, encoding="utf-8")
+          print("Patched export_presets.cfg for project-only export")
+          PY
+
+      - name: Export the iOS Xcode project
+        run: |
+          set -o pipefail
+          mkdir -p build/ios
+          "$GODOT_BIN" --headless --path . \
+            --export-release "iOS" "$PWD/build/ios/PixelPainter.ipa" 2>&1 | tee export.log
+          echo "--- build/ios contents ---"
+          ls -R build/ios
+
+      - name: Locate generated Xcode project
+        id: xcode
+        run: |
+          set -euo pipefail
+          PROJ="$(find build/ios -maxdepth 2 -name '*.xcodeproj' | head -1)"
+          if [ -z "$PROJ" ]; then
+            echo "No .xcodeproj was generated. Export log:"
+            cat export.log || true
+            exit 1
+          fi
+          SCHEME="$(xcodebuild -project "$PROJ" -list -json | python3 -c "import json,sys; print(json.load(sys.stdin)['project']['schemes'][0])")"
+          echo "project=$PROJ" >> "$GITHUB_OUTPUT"
+          echo "scheme=$SCHEME" >> "$GITHUB_OUTPUT"
+          echo "Found project '$PROJ', scheme '$SCHEME'"
+
+      - name: Detect signing secrets
+        id: signing
+        run: |
+          if [ -n "${{ secrets.IOS_DIST_CERT_BASE64 }}" ] \
+             && [ -n "${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}" ] \
+             && [ -n "${{ secrets.IOS_TEAM_ID }}" ]; then
+            echo "sign=true" >> "$GITHUB_OUTPUT"
+            echo "Signing secrets present; a signed build will be produced"
+          else
+            echo "sign=false" >> "$GITHUB_OUTPUT"
+            echo "No signing secrets; an unsigned build will be produced"
+          fi
+
+      - name: Install signing assets
+        if: steps.signing.outputs.sign == 'true'
+        env:
+          CERT_B64: ${{ secrets.IOS_DIST_CERT_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          PROFILE_B64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          CERT_PATH="$RUNNER_TEMP/dist.p12"
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          KEYCHAIN="$RUNNER_TEMP/app-signing.keychain-db"
+
+          echo "$CERT_B64" | base64 --decode > "$CERT_PATH"
+          echo "$PROFILE_B64" | base64 --decode > "$PROFILE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERT_PATH" -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security list-keychain -d user -s "$KEYCHAIN" login.keychain-db
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          UUID="$(/usr/libexec/PlistBuddy -c 'Print UUID' /dev/stdin <<< "$(security cms -D -i "$PROFILE_PATH")")"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+          echo "PROFILE_UUID=$UUID" >> "$GITHUB_ENV"
+
+      - name: Build unsigned
+        if: steps.signing.outputs.sign != 'true'
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project "${{ steps.xcode.outputs.project }}" \
+            -scheme "${{ steps.xcode.outputs.scheme }}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO \
+            build
+
+      - name: Build signed
+        if: steps.signing.outputs.sign == 'true'
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project "${{ steps.xcode.outputs.project }}" \
+            -scheme "${{ steps.xcode.outputs.scheme }}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            DEVELOPMENT_TEAM="${{ secrets.IOS_TEAM_ID }}" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
+            CODE_SIGN_STYLE=Manual \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO \
+            build
+
+      - name: Package ipa
+        run: |
+          set -euo pipefail
+          APP="$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' | head -1)"
+          if [ -z "$APP" ]; then
+            echo "No .app was produced by xcodebuild"
+            exit 1
+          fi
+          rm -rf "$RUNNER_TEMP/Payload"
+          mkdir -p "$RUNNER_TEMP/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/Payload/"
+          mkdir -p artifacts
+          SUFFIX="unsigned"
+          if [ "${{ steps.signing.outputs.sign }}" = "true" ]; then
+            SUFFIX="signed"
+          fi
+          (cd "$RUNNER_TEMP" && zip -qr -y "PixelPainter-ios-${SUFFIX}.ipa" Payload)
+          cp "$RUNNER_TEMP/PixelPainter-ios-${SUFFIX}.ipa" artifacts/
+          ls -lh artifacts
+
+      - name: Upload ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixelPainter-ios
+          path: artifacts/*.ipa
+          if-no-files-found: error
+
+      - name: Upload export log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-export-log
+          path: export.log
+          if-no-files-found: ignore
+
+  build-windows:
+    name: Export Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Cache Godot editor and export templates
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\godot-ci
+            ~\AppData\Roaming\Godot\export_templates\${{ env.GODOT_TEMPLATE_DIR }}
+          key: godot-${{ env.GODOT_VERSION }}-windows
+
+      - name: Download Godot and export templates
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $base = "https://github.com/godotengine/godot-builds/releases/download/$env:GODOT_VERSION"
+          New-Item -ItemType Directory -Force -Path "$HOME\godot-ci" | Out-Null
+          Set-Location "$HOME\godot-ci"
+
+          Invoke-WebRequest -Uri "$base/Godot_v$env:GODOT_VERSION_win64.exe.zip" -OutFile "godot.zip"
+          Expand-Archive -Path "godot.zip" -DestinationPath "." -Force
+
+          Invoke-WebRequest -Uri "$base/Godot_v$env:GODOT_VERSION_export_templates.tpz" -OutFile "templates.tpz"
+          Expand-Archive -Path "templates.tpz" -DestinationPath "." -Force
+
+          $templateDest = "$HOME\AppData\Roaming\Godot\export_templates\$env:GODOT_TEMPLATE_DIR"
+          New-Item -ItemType Directory -Force -Path $templateDest | Out-Null
+          Copy-Item -Path "templates\*" -Destination $templateDest -Recurse -Force
+
+      - name: Expose Godot binary on PATH
+        shell: pwsh
+        run: |
+          $godot = (Get-ChildItem "$HOME\godot-ci" -Filter "Godot_v*_win64.exe" | Select-Object -First 1).FullName
+          if (-not $godot) {
+            throw "Godot executable not found"
+          }
+          "GODOT_BIN=$godot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Report version
+        shell: pwsh
+        run: |
+          & "$env:GODOT_BIN" --version
+
+      - name: Import and export Windows build
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & "$env:GODOT_BIN" --headless --path . --editor --quit
+          New-Item -ItemType Directory -Force -Path "build\windows" | Out-Null
+          & "$env:GODOT_BIN" --headless --path . --export-release "Windows Desktop" "$pwd\build\windows\PixelPainter.exe"
+
+      - name: Package Windows artifact
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          Compress-Archive -Path "build\windows\*" -DestinationPath "artifacts\PixelPainter-windows.zip" -Force
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixelPainter-windows
+          path: artifacts/PixelPainter-windows.zip
+          if-no-files-found: error
